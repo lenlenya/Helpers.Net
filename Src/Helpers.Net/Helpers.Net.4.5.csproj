@@ -125,6 +125,7 @@
   <ItemGroup>
     <Compile Include="AlphaID.cs" />
     <Compile Include="ArgumentValidation.cs" />
+    <Compile Include="BooleanExtensions.cs" />
     <Compile Include="CacheExtensions.cs" />
     <Compile Include="CloneExtensions.cs" />
     <Compile Include="DateTimeExtensions.cs" />

@@ -30,13 +30,14 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\Helpers.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -119,6 +120,7 @@
   <ItemGroup>
     <Compile Include="AlphaID.cs" />
     <Compile Include="ArgumentValidation.cs" />
+    <Compile Include="BooleanExtensions.cs" />
     <Compile Include="CacheExtensions.cs" />
     <Compile Include="CloneExtensions.cs" />
     <Compile Include="DateTimeExtensions.cs" />
@@ -141,6 +143,10 @@
     <Compile Include="WebHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy $(TargetPath) E:\Develop\SupplierProject\SupplierSolution01\libraries /y
+xcopy $(TargetDir)$(TargetName).XML E:\Develop\SupplierProject\SupplierSolution01\libraries /y</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

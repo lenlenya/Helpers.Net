@@ -32,6 +32,24 @@ namespace System.Linq
         }
 
         /// <summary>
+        /// Executes a method if the object is not it's default value (null for reference types), else return special value.
+        /// It's the same as doing: o == null ? null : o.SomeProperty
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="defaultReturn"></param>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        public static TResult IfNotNull<T, TResult>(this T o, TResult defaultReturn, Func<T, TResult> method)
+        {
+            if (o == null || o.Equals(default(T)))
+                return defaultReturn;
+            else
+                return method(o);
+        }
+
+        /// <summary>
         /// Enumerates through a list and executes some code, similar to a foreach statement
         /// </summary>
         /// <typeparam name="T"></typeparam>
