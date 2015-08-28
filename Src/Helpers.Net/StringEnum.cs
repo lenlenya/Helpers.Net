@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 namespace Helpers.Net
 {
@@ -28,8 +29,13 @@ namespace Helpers.Net
         }
     }
 
+    /// <summary>
+    /// Enum's StringValue.
+    /// </summary>
     public static class StringEnumExtensions
     {
+        private static ConcurrentDictionary<Type, IDictionary<string, string>> enums = new ConcurrentDictionary<Type, IDictionary<string, string>>();
+
         /// <summary>
         /// Will get the string value for a given enums value, this will
         /// only work if you assign the StringValue attribute to
@@ -39,18 +45,37 @@ namespace Helpers.Net
         /// <returns></returns>
         public static string GetStringValue(this Enum value)
         {
+            if (value == null) return null;
             // Get the type
             Type type = value.GetType();
+            if (Enum.IsDefined(type, value))
+            {
+                var name = Enum.GetName(type, value);
+                return GetAttributes(type)[name];
+            }
+            return value.ToString();
+        }
 
-            // Get fieldinfo for this type
-            FieldInfo fieldInfo = type.GetField(value.ToString());
-
-            // Get the stringvalue attributes
-            StringValueAttribute[] attribs = fieldInfo.GetCustomAttributes(
-                typeof(StringValueAttribute), false) as StringValueAttribute[];
-
-            // Return the first if there was a match.
-            return attribs.Length > 0 ? attribs[0].StringValue : null;
+        /// <summary>
+        /// 获取枚举值的描述说明，通过缓存优化性能。
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static IDictionary<string, string> GetAttributes(Type type)
+        {
+            IDictionary<string, string> dict = null;
+            if (!enums.TryGetValue(type, out dict))
+            {
+                dict = new Dictionary<string, string>();
+                foreach (var item in type.GetFields())
+                {
+                    if (!item.IsLiteral) continue;//此处过滤了编译过程中产生的一个Field，一开始还没发现，感觉很奇怪为啥会在编译的时候多了一个Field
+                    var attrs = item.GetCustomAttributes<StringValueAttribute>(false);
+                    dict.Add(item.Name, attrs.FirstOrDefault().IfNotNull(item.Name, x => x.StringValue));
+                }
+                enums.TryAdd(type, dict);
+            }
+            return dict;
         }
     }
 }
