@@ -70,7 +70,11 @@ namespace Helpers.Net
                 foreach (var item in type.GetFields())
                 {
                     if (!item.IsLiteral) continue;//此处过滤了编译过程中产生的一个Field，一开始还没发现，感觉很奇怪为啥会在编译的时候多了一个Field
+#if NET40
+                    var attrs = (StringValueAttribute[])item.GetCustomAttributes(typeof(StringValueAttribute), false);
+#else
                     var attrs = item.GetCustomAttributes<StringValueAttribute>(false);
+#endif
                     dict.Add(item.Name, attrs.FirstOrDefault().IfNotNull(item.Name, x => x.StringValue));
                 }
                 enums.TryAdd(type, dict);
