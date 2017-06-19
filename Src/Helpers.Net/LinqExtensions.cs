@@ -58,8 +58,9 @@ namespace System.Linq
         /// <returns></returns>
         public static IEnumerable<T> Each<T>(this IEnumerable<T> source, Action<T> action)
         {
-            foreach (var item in source)
-                action(item);
+            if (source != null)
+                foreach (var item in source)
+                    action(item);
             return source;
         }
 
